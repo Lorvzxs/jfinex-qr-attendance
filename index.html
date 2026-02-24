@@ -1,104 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Maker - Fix Scan</title>
+    <title>QR Code Maker - Scannable Fix</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 40px; background-color: #f0f0f0; }
-        .card { background: white; padding: 30px; border-radius: 15px; display: inline-block; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        body { font-family: sans-serif; text-align: center; padding: 20px; background-color: #f4f4f4; }
+        .box { background: white; padding: 40px; border-radius: 10px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         
-        /* Mao ni ang gap para dali ma-scan */
-        #qrcode { 
-            padding: 20px; 
-            background: white; 
+        /* Mao ni ang fix: Puti nga background sa palibot sa QR */
+        #qrcode-container { 
+            background-color: white; 
+            padding: 30px; 
             display: inline-block; 
-            margin-top: 20px;
+            margin: 20px 0;
             border: 1px solid #eee;
         }
         
-        input { padding: 12px; width: 280px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; outline: none; }
-        input:focus { border-color: #007bff; }
-        
-        button { padding: 12px 20px; cursor: pointer; border-radius: 8px; border: none; font-weight: bold; font-size: 16px; transition: 0.3s; }
-        .btn-gen { background-color: #007bff; color: white; margin-left: 5px; }
-        .btn-gen:hover { background-color: #0056b3; }
-        
-        #download-btn { 
-            background-color: #28a745; 
-            color: white; 
-            margin-top: 20px; 
-            display: none; 
-            width: 100%;
-        }
-        #download-btn:hover { background-color: #218838; }
+        input { padding: 12px; width: 250px; border-radius: 5px; border: 1px solid #ccc; }
+        button { padding: 12px 20px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; }
+        .btn-gen { background-color: #007bff; color: white; }
+        #download-btn { background-color: #28a745; color: white; display: none; margin-top: 10px; width: 100%; }
     </style>
 </head>
 <body>
 
-    <div class="card">
+    <div class="box">
         <h2>QR Code Generator</h2>
-        <p style="color: #666;">Para sa Qualitative Research Participants</p>
-        
-        <input type="text" id="text-input" placeholder="Enter ID (e.g. Participant-001)">
+        <input type="text" id="text-input" placeholder="Type Participant ID here">
         <button class="btn-gen" onclick="generateQR()">Generate</button>
         
         <br>
-        <div id="qrcode"></div>
+        <div id="qrcode-container">
+            <div id="qrcode"></div>
+        </div>
         <br>
         
-        <button id="download-btn" onclick="downloadQR()">📥 Download QR Code (.png)</button>
+        <button id="download-btn" onclick="downloadQR()">📥 Download PNG</button>
     </div>
 
     <script>
-        const qrcodeContainer = document.getElementById("qrcode");
+        const container = document.getElementById("qrcode");
         const downloadBtn = document.getElementById("download-btn");
-        let qrObject = null;
+        let qrcode = new QRCode(container, { width: 250, height: 250 });
 
         function generateQR() {
-            const input = document.getElementById("text-input").value;
-            if (!input) {
-                alert("Palihug butangi og ID o Text!");
-                return;
-            }
-
-            // Clear previous QR
-            qrcodeContainer.innerHTML = "";
-
-            // Create new QR with Fix settings
-            qrObject = new QRCode(qrcodeContainer, {
-                text: input,
-                width: 256,
-                height: 256,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H // Highest Level para dali ma-scan
-            });
-
-            // I-pakita ang download button
-            setTimeout(() => {
+            const val = document.getElementById("text-input").value;
+            if (val) {
+                qrcode.makeCode(val);
                 downloadBtn.style.display = "block";
-            }, 100);
+            }
         }
 
         function downloadQR() {
-            // Kuhaon ang image gikan sa canvas (mas clear ang canvas kaysa img tag)
-            const canvas = qrcodeContainer.querySelector("canvas");
-            if (canvas) {
+            // Kuhaon ang image sa sulod
+            const img = container.querySelector("img");
+            if (img) {
                 const link = document.createElement("a");
-                link.href = canvas.toDataURL("image/png");
-                link.download = "QR_Fixed_" + document.getElementById("text-input").value + ".png";
+                link.href = img.src;
+                link.download = "QR_Participant.png";
                 link.click();
-            } else {
-                // Fallback para sa ubang browser nga <img> ang gigamit
-                const img = qrcodeContainer.querySelector("img");
-                if (img) {
-                    const link = document.createElement("a");
-                    link.href = img.src;
-                    link.download = "QR_Fixed.png";
-                    link.click();
-                }
             }
         }
     </script>
