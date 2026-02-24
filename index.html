@@ -1,23 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>QR Code Maker</title>
+    <title>QR Code Maker & Downloader</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 20px; }
-        #qrcode { margin-top: 20px; display: flex; justify-content: center; }
-        input { padding: 10px; width: 250px; }
+        body { font-family: sans-serif; text-align: center; padding: 20px; background-color: #f9f9f9; }
+        .container { background: white; padding: 30px; border-radius: 10px; display: inline-block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        #qrcode { margin: 20px auto; display: flex; justify-content: center; }
+        input { padding: 10px; width: 250px; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 15px; cursor: pointer; border-radius: 5px; border: none; margin: 5px; }
+        .btn-generate { background-color: #007bff; color: white; }
+        .btn-download { background-color: #28a745; color: white; display: none; } /* Hidden initialy */
     </style>
 </head>
 <body>
-    <h2>QR Code Generator</h2>
-    <input type="text" id="text-input" placeholder="Enter URL or Text">
-    <button onclick="generateQR()">Generate</button>
-    
-    <div id="qrcode"></div>
+
+    <div class="container">
+        <h2>QR Code Generator</h2>
+        <input type="text" id="text-input" placeholder="Enter Participant ID or Name">
+        <button class="btn-generate" onclick="generateQR()">Generate</button>
+        
+        <div id="qrcode"></div>
+        
+        <button id="download-btn" class="btn-download" onclick="downloadQR()">Download Image (.png)</button>
+    </div>
 
     <script>
-        const qrcode = new QRCode(document.getElementById("qrcode"), {
+        const qrcodeContainer = document.getElementById("qrcode");
+        const downloadBtn = document.getElementById("download-btn");
+
+        const qrcode = new QRCode(qrcodeContainer, {
             width: 200,
             height: 200
         });
@@ -26,8 +38,27 @@
             const input = document.getElementById("text-input").value;
             if (input) {
                 qrcode.makeCode(input);
+                // I-pakita ang download button inig human og generate
+                downloadBtn.style.display = "inline-block";
             } else {
-                alert("Please enter some text!");
+                alert("Palihug butangi og text o ID!");
+            }
+        }
+
+        function downloadQR() {
+            // Pangitaon ang image (<img>) sa sulod sa qrcode div
+            const qrImage = qrcodeContainer.querySelector("img");
+            
+            if (qrImage) {
+                const imageUrl = qrImage.src;
+                const link = document.createElement("a");
+                link.href = imageUrl;
+                link.download = "Participant_QR.png"; // Ngalan sa file inig download
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                alert("I-generate usa ang QR code!");
             }
         }
     </script>
