@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>QR Code Maker - JPEG Fix</title>
+    <title>QR Code Maker</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         body { font-family: sans-serif; text-align: center; padding: 30px; background-color: #f4f4f4; }
         .container { background: white; padding: 30px; border-radius: 12px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         
-        /* Mao ni ang gap/border para dali ma-scan */
+        
         #qrcode-canvas-wrapper { 
             background-color: white; 
             padding: 40px; 
@@ -22,7 +22,7 @@
         .btn-gen { background-color: #007bff; color: white; }
         .btn-down { background-color: #e67e22; color: white; display: none; width: 100%; }
         
-        /* Hidden temporary canvas for JPEG conversion */
+       
         #hidden-canvas { display: none; }
     </style>
 </head>
@@ -30,7 +30,7 @@
 
     <div class="container">
         <h2>QR Code Generator (JPEG)</h2>
-        <input type="text" id="text-input" placeholder="Enter Participant ID">
+        <input type="text" id="text-input" placeholder="1A-DELA CRUZ, JUAN A.">
         <button class="btn-gen" onclick="generateQR()">Generate</button>
         
         <br>
@@ -52,11 +52,11 @@
         function generateQR() {
             const input = document.getElementById("text-input").value;
             if (!input) {
-                alert("Palihug butangi og ID!");
+                alert("BUTANGI DAW PAIHORG!");
                 return;
             }
 
-            qrcodeContainer.innerHTML = ""; // Clear karaan
+            qrcodeContainer.innerHTML = ""; 
             qrObject = new QRCode(qrcodeContainer, {
                 text: input,
                 width: 300,
@@ -66,7 +66,7 @@
                 correctLevel : QRCode.CorrectLevel.H
             });
 
-            // I-pakita ang download button pagkahuman sa gamay nga delay
+            
             setTimeout(() => { downloadBtn.style.display = "block"; }, 200);
         }
 
@@ -75,19 +75,19 @@
             const finalCanvas = document.getElementById("hidden-canvas");
             const ctx = finalCanvas.getContext("2d");
             
-            // I-set ang size sa JPEG (QR + White Border)
+            
             const padding = 60; 
             finalCanvas.width = qrCanvas.width + (padding * 2);
             finalCanvas.height = qrCanvas.height + (padding * 2);
 
-            // 1. Pintalan og Puti ang tibuok background (Importante para sa JPEG)
+            
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
 
-            // 2. I-butang ang QR code sa tunga
+            
             ctx.drawImage(qrCanvas, padding, padding);
 
-            // 3. I-download na isip JPEG
+
             const link = document.createElement("a");
             link.download = "QR_" + document.getElementById("text-input").value + ".jpg";
             link.href = finalCanvas.toDataURL("image/jpeg", 1.0); // 1.0 means highest quality
