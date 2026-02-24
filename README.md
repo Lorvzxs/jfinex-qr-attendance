@@ -1,1 +1,0 @@
-# jfinex-qr-attendance
